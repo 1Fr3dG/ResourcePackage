@@ -1,0 +1,6 @@
+use_frameworks!
+target 'ResourcePackage_Tests' do
+  pod 'ResourcePackage', :path => '../'
+  
+  
+end
