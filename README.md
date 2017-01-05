@@ -1,17 +1,21 @@
 # ResourcePackage
 
-[![CI Status](http://img.shields.io/travis/Alfred Gao/ResourcePackage.svg?style=flat)](https://travis-ci.org/Alfred Gao/ResourcePackage)
+[![CI Status](http://img.shields.io/travis/1Fr3dG/ResourcePackage.svg?style=flat)](https://travis-ci.org/1Fr3dG/ResourcePackage)
 [![Version](https://img.shields.io/cocoapods/v/ResourcePackage.svg?style=flat)](http://cocoapods.org/pods/ResourcePackage)
 [![License](https://img.shields.io/cocoapods/l/ResourcePackage.svg?style=flat)](http://cocoapods.org/pods/ResourcePackage)
 [![Platform](https://img.shields.io/cocoapods/p/ResourcePackage.svg?style=flat)](http://cocoapods.org/pods/ResourcePackage)
 
-## Example
+将 app 资源打包加密进行管理。
 
-To run the example project, clone the repo, and run `pod install` from the Example directory first.
+Package resources to a single file, and access them via file name as key.
 
 ## Requirements
 
+* iOS 9.0+, OSX 10.12+
+
 ## Installation
+
+TextFormater 可通过[CocoaPods](http://cocoapods.org)安装：
 
 ResourcePackage is available through [CocoaPods](http://cocoapods.org). To install
 it, simply add the following line to your Podfile:
@@ -20,9 +24,11 @@ it, simply add the following line to your Podfile:
 pod "ResourcePackage"
 ```
 
+## Usage
+
 ## Author
 
-Alfred Gao, alfredg@alfredg.cn
+[Alfred Gao](http://alfredg.org), [alfredg@alfredg.cn](mailto:alfredg@alfredg.cn)
 
 ## License
 
