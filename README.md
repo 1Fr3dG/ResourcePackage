@@ -26,6 +26,10 @@ pod "ResourcePackage"
 
 ## Usage
 
+
+## Structure
+![Structure](structure.png)
+
 ## Author
 
 [Alfred Gao](http://alfredg.org), [alfredg@alfredg.cn](mailto:alfredg@alfredg.cn)

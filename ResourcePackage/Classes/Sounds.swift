@@ -73,7 +73,7 @@ extension ResourcePackageReader {
     /// 播放音乐
     ///
     /// play music
-    func playMusic(_ key: String, loops: Int = 1, volume: Float = 100) {
+    public func playMusic(_ key: String, loops: Int = 1, volume: Float = 100) {
         stopMusic()
         
         // load music data
@@ -103,7 +103,7 @@ extension ResourcePackageReader {
     /// 停止音乐播放
     ///
     /// stop music
-    func stopMusic() {
+    public func stopMusic() {
         musicPlayer?.stop()
     }
     
