@@ -54,13 +54,13 @@ public class ResourcePackageReader: NSObject {
     ///
     /// only chack this during 2 step loacting
     #if os(iOS)
-    var _devicecustimizable = true
-    var _deviceType = ".ipad"
-    var _deviceModel = ".ipadmini"
+        var _devicecustimizable = true
+        var _deviceType = ".ipad"
+        var _deviceModel = ".ipadmini"
     #elseif os(OSX)
-    var _devicecustimizable = false
-    var _deviceType = ""
-    var _deviceModel = ""
+        var _devicecustimizable = false
+        var _deviceType = ""
+        var _deviceModel = ""
     #endif
     
     /// read data from package
@@ -183,15 +183,17 @@ public class ResourcePackageReader: NSObject {
         super.init()
     }
     
-    public var onDeInit: [() -> Void] = []
-    
     deinit {
-        for fn in onDeInit {
-            fn()
+        for (_, soundid) in sounds {
+            AudioServicesDisposeSystemSoundID(soundid)
         }
     }
     
     /// used by Themes extension
     var _textFormater = TextFormater()
+    
+    /// used by sounds extension
+    var musicPlayer : AVAudioPlayer?
+    var sounds: [String : SystemSoundID] = [:]
     
 }

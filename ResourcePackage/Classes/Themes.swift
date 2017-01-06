@@ -11,7 +11,6 @@ import TextFormater
     import UIKit
 #elseif os(OSX)
     import Cocoa
-    typealias UIImage = NSImage
 #endif
 
 extension ResourcePackageReader {
@@ -218,6 +217,7 @@ extension ResourcePackageReader {
     /// 获取主题图片
     ///
     /// get image from theme
+    #if os(iOS)
     public func getImage(_ key: String) -> UIImage? {
         if let _data = self[key],
             let img = UIImage(data: _data) {
@@ -226,4 +226,14 @@ extension ResourcePackageReader {
             return nil
         }
     }
+    #elseif os(OSX)
+    public func getImage(_ key: String) -> NSImage? {
+        if let _data = self[key],
+            let img = NSImage(data: _data) {
+            return img
+        } else {
+            return nil
+        }
+    }
+    #endif
 }
