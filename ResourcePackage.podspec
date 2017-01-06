@@ -22,4 +22,5 @@ So resources can be easily managemented as well as encrypted.
   
   s.dependency 'SimpleEncrypter'
   s.dependency 'TextFormater'
+  s.ios.dependency 'DeviceKit'
 end
