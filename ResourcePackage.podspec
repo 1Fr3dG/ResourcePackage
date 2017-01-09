@@ -18,7 +18,7 @@ So resources can be easily managemented as well as encrypted.
   s.ios.deployment_target = '9.0'
   s.osx.deployment_target = '10.12'
 
-  s.source_files = 'ResourcePackage/Classes/**/*'
+  s.source_files = 'Sources/*'
   
   s.dependency 'SimpleEncrypter'
   s.dependency 'TextFormater'
