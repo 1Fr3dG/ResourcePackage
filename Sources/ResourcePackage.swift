@@ -121,7 +121,7 @@ public class ResourcePackage: NSObject {
         let _pkgShortName = URL(fileURLWithPath: resourcePackageFileName).lastPathComponent
         let pkgName = NSKeyedArchiver.archivedData(withRootObject: _pkgShortName)
         let encodedName = cypherDeligate.encrypt(compressDeligate.encrypt(pkgName))
-        resourcefile.append(pkgName)
+        resourcefile.append(encodedName)
         resourcelist = ["_packageName": [16,16+encodedName.count]]
         
         // 尝试写入文件 - try create real file
