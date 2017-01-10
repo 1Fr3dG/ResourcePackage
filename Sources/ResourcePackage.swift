@@ -119,7 +119,7 @@ public class ResourcePackage: NSObject {
         resourcefile.append(Data(count: 8)) // space for resourcelist pointer
         
         let _pkgShortName = URL(fileURLWithPath: resourcePackageFileName).lastPathComponent
-        let pkgName = NSKeyedArchiver.archivedData(withRootObject: _pkgShortName)
+        let pkgName = NSKeyedArchiver.archivedData(withRootObject: _pkgShortName.data(using: .utf8)!)
         let encodedName = cypherDeligate.encrypt(compressDeligate.encrypt(pkgName))
         resourcefile.append(encodedName)
         resourcelist = ["_packageName": [16,16+encodedName.count]]
