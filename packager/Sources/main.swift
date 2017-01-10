@@ -5,7 +5,7 @@ import SimpleEncrypter
 import CommandLineKit
 import Rainbow
 
-let versionString = "Ver 0.2.0\n"
+let versionString = "Ver 1.0.0\n"
 let _usageTitle = "Usage: packager operation <packageName> [path|resource] [options]\n\n".bold
 let _usageOperations = "  " + "operation: create|list|extract \n".green.bold.underline +
     "    " + "packager create <packageName> <path> [options] \n".blue +
@@ -19,15 +19,8 @@ print(versionString)
 
 let cli = CommandLineKit.CommandLine()
 
-let compress : StringOption
-if #available(iOS 9.0, OSX 10.11, watchOS 2.0, tvOS 9.0, *) {
-    compress = StringOption(longFlag: "compress", required: false,
-                            helpMessage: "Algorithm for compress - none/lz4/lzma/zlib/lzfse/gzip")
-}
-else {
-    compress = StringOption(longFlag: "compress", required: false,
-                            helpMessage: "Algorithm for compress - none/lz4/lzma/zlib/lzfse/gzip" + "\n" + "This version support only none & gzip".blink)
-}
+let compress = StringOption(longFlag: "compress", required: false,
+                            helpMessage: "Algorithm for compress - none/gzip")
 let encrypt = StringOption(longFlag: "encrypt", required: false,
                             helpMessage: "Algorithm for encryption - none/xor/aes")
 let password = StringOption(longFlag: "password", required: false,
@@ -105,15 +98,14 @@ if compress.value != nil {
         print("  " + compress.value!.blue.bold.onYellow + " is not available, use ".red + "EncrypterNone".green.blink)
         _compress = EncrypterNone(with: "")
     }
-    if #available(iOS 9.0, OSX 10.11, watchOS 2.0, tvOS 9.0, *) {
-        
-    } else {
-        if compress.value!.lowercased() != "none" && compress.value!.lowercased() != "gzip" {
-            print("This version support only none & gzip".blink)
-            print("Force using gzip".blink)
-            _compress = EncrypterCompress(with: "gzip")
-        }
+
+    // support only none/gzip due to swift build force osx.target 11.10
+    if compress.value!.lowercased() != "none" && compress.value!.lowercased() != "gzip" {
+        print("This version support only none & gzip".blink)
+        print("Force using gzip".blink)
+        _compress = EncrypterCompress(with: "gzip")
     }
+
 }
 
 if password.value != nil {
