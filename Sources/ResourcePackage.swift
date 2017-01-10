@@ -12,7 +12,7 @@ import SimpleEncrypter
 ///
 /// Manage one packagefile
 public class ResourcePackage: NSObject {
-    public var _logger : (String) -> Void = {_ in }
+    static public var _logger : (String) -> Void = {_ in }
     let resourcePackageFileName: String
     private var resourcefile: Data
     private var resourcelist: [String : [Int]]
@@ -44,36 +44,36 @@ public class ResourcePackage: NSObject {
         cypherDeligate = encrypter
         compressDeligate = compressor
         
-        _logger("Loading resource file: \(file) ...")
+        ResourcePackage._logger("Loading resource file: \(file) ...")
         isWritable = false
         
         do {
             // open file
             try resourcefile = Data(contentsOf: URL(fileURLWithPath: file), options: Data.ReadingOptions.alwaysMapped)
             resourcePackageFileName = file
-            _logger("  Resource file [\(file)] loading succeed")
+            ResourcePackage._logger("  Resource file [\(file)] loading succeed")
         } catch {
-            _logger("  ERROR: Resource file [\(file)] loading failed")
+            ResourcePackage._logger("  ERROR: Resource file [\(file)] loading failed")
             return nil
         }
         
         // file length should > sum of keys
         guard resourcefile.count > 40 else {
             let _fileLength = resourcefile.count
-            _logger("  ERROR: Resource file [\(file)] format incorrect: File length [\(_fileLength)] to small")
+            ResourcePackage._logger("  ERROR: Resource file [\(file)] format incorrect: File length [\(_fileLength)] to small")
             return nil
         }
         
         // signature == RSPK
         guard resourcefile.subdata(in: 0..<4) == Data(bytes: [82, 83, 80, 75]) else {
             let _signature = resourcefile.subdata(in: 0..<4)
-            _logger("  ERROR: Resource file [\(file)] format incorrect: Illegal signature: \(_signature.toHexString())")
+            ResourcePackage._logger("  ERROR: Resource file [\(file)] format incorrect: Illegal signature: \(_signature.toHexString())")
             return nil
         }
         
         // double check resource list address
         guard resourcefile.subdata(in: 8..<16) == resourcefile.subdata(in: resourcefile.count-24..<resourcefile.count-16) else {
-            _logger("  ERROR: Resource file [\(file)] format incorrect: Index address incorrect")
+            ResourcePackage._logger("  ERROR: Resource file [\(file)] format incorrect: Index address incorrect")
             return nil
         }
         
@@ -81,17 +81,17 @@ public class ResourcePackage: NSObject {
         let resourcelistAddress: Int32 = resourcefile.subdata(in: 8..<12).withUnsafeBytes { $0.pointee }
         let resourcelistEnd: Int32 = resourcefile.subdata(in: 12..<16).withUnsafeBytes { $0.pointee }
         
-        _logger("-> Resource list loaded: \(file) [\(resourcelistAddress) - \(resourcelistEnd)]")
+        ResourcePackage._logger("-> Resource list loaded: \(file) [\(resourcelistAddress) - \(resourcelistEnd)]")
         let resourcelistRange: Range<Data.Index> = Int(resourcelistAddress) ..< Int(resourcelistEnd)
         let listdata = cypherDeligate.decrypt(compressDeligate.decrypt(resourcefile.subdata(in: resourcelistRange)))
         resourcelist = NSKeyedUnarchiver.unarchiveObject(with: listdata) as! [String : [Int]]
         
         guard resourcelist.count > 0 else {
-            _logger("  ERROR: Resource file \(file) has no resource")
+            ResourcePackage._logger("  ERROR: Resource file \(file) has no resource")
             return nil
         }
         let _resourceCount = resourcelist.count
-        _logger("-> Resource file \(file) has \(_resourceCount) resources")
+        ResourcePackage._logger("-> Resource file \(file) has \(_resourceCount) resources")
     }
     
     /// 创建空文件准备写入
@@ -102,13 +102,13 @@ public class ResourcePackage: NSObject {
                           compressor: SimpleEncrypter = EncrypterCompress(with: "lzfse")) {
         cypherDeligate = encrypter
         compressDeligate = compressor
-        _logger("Creating resource package file: \(file) ...")
+        ResourcePackage._logger("Creating resource package file: \(file) ...")
         isWritable = true
         
         let fileManager = FileManager.default
         // 文件已存在 - file exists
         guard !fileManager.fileExists(atPath: file) else {
-            _logger("  ERROR: File \(file) exists")
+            ResourcePackage._logger("  ERROR: File \(file) exists")
             return nil
         }
         resourcePackageFileName = file
@@ -127,9 +127,9 @@ public class ResourcePackage: NSObject {
         // 尝试写入文件 - try create real file
         do {
             try resourcefile.write(to: URL(fileURLWithPath: file))
-            _logger("  Resource file \(file) created")
+            ResourcePackage._logger("  Resource file \(file) created")
         } catch {
-            _logger("  ERROR: File \(file) is not writable")
+            ResourcePackage._logger("  ERROR: File \(file) is not writable")
             return nil
         }
     }
@@ -138,9 +138,9 @@ public class ResourcePackage: NSObject {
     ///
     /// Generate tail structure
     public func save() -> Bool {
-        _logger("  Creating tail structure for: \(self.resourcePackageFileName)")
+        ResourcePackage._logger("  Creating tail structure for: \(self.resourcePackageFileName)")
         guard isWritable else {
-            _logger("ERROR: ReWrite is not allowed")
+            ResourcePackage._logger("ERROR: ReWrite is not allowed")
             return false
         }
         isWritable = false  // 只允许一次写入
@@ -149,22 +149,22 @@ public class ResourcePackage: NSObject {
         var resourcelistAddress = Int32(resourcefile.count)
         resourcefile.append(encode(NSKeyedArchiver.archivedData(withRootObject: resourcelist)))
         var resourcelistEnd = Int32(resourcefile.count)
-        _logger("  Package includes \(resourcelist.count) resources, index structure uses \((resourcelistEnd - resourcelistAddress)/1024)KB")
+        ResourcePackage._logger("  Package includes \(resourcelist.count) resources, index structure uses \((resourcelistEnd - resourcelistAddress)/1024)KB")
         // count index pointer & md5
         resourcefile.append(Data(bytes: &resourcelistAddress, count: 4))
         resourcefile.append(Data(bytes: &resourcelistEnd, count: 4))
         resourcefile.replaceSubrange(8..<16, with: resourcefile.subdata(in: resourcefile.count-8..<resourcefile.count))
         let md5 = resourcefile.md5()
-        _logger("  MD5: \(md5.toHexString())")
+        ResourcePackage._logger("  MD5: \(md5.toHexString())")
         resourcefile.append(md5)
         
         // 尝试写入文件 - try write file
         do {
             try resourcefile.write(to: URL(fileURLWithPath: resourcePackageFileName))
-            _logger("  \(resourcelist.count) resources packaged to: \(resourcePackageFileName)")
+            ResourcePackage._logger("  \(resourcelist.count) resources packaged to: \(resourcePackageFileName)")
             return true
         } catch {
-            _logger("  ERROR: File \(resourcePackageFileName) is not writable")
+            ResourcePackage._logger("  ERROR: File \(resourcePackageFileName) is not writable")
             return false
         }
     }
@@ -178,7 +178,7 @@ public class ResourcePackage: NSObject {
             while _key.lengthOfBytes(using: .utf8) > 0 && _key.substring(to: _key.index(after: _key.startIndex)) == "/" {
                 _key.remove(at: _key.startIndex)
             }
-            _logger("Locating resource: [\(resourcePackageFileName)].[\(_key)]")
+            ResourcePackage._logger("Locating resource: [\(resourcePackageFileName)].[\(_key)]")
             if let _range = resourcelist[_key] {
                 return NSKeyedUnarchiver.unarchiveObject(with: decode(resourcefile.subdata(in: _range[0]..<_range[1]))) as! Data?
             } else {
@@ -201,12 +201,12 @@ public class ResourcePackage: NSObject {
     /// Append resource
     public func append(with key: String, value: Data) -> Bool {
         guard isWritable else {
-            _logger("ERROR: Package in readonly mode")
+            ResourcePackage._logger("ERROR: Package in readonly mode")
             return false
         }
         
         if resourcelist[key] != nil {
-            _logger("ERROR: Duplicated key [\(key)]")
+            ResourcePackage._logger("ERROR: Duplicated key [\(key)]")
             return false
         }
         
