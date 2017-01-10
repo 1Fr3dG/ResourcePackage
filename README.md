@@ -23,12 +23,72 @@ it, simply add the following line to your Podfile:
 ```ruby
 pod "ResourcePackage"
 ```
+## Structure
+![Structure](structure.png)
 
 ## Usage
 
+### Packager - 打包工具
 
-## Structure
-![Structure](structure.png)
+~~~bash
+git clone https://github.com/1Fr3dG/ResourcePackage.git
+cd ResourcePackage
+cd packager
+swift build -c release
+.build/release/packager
+~~~
+
+可使用该打包工具将资源目录打包为单个文件供 app 使用。
+
+This tool designed to package a resource folder to a single file, for used by app.
+
+**Note:** This tool support only gzip as compress algorithm, you can build your own tool to support more.
+
+### Open a package
+
+~~~swift
+let _compress: SimpleEncrypter = EncrypterCompress(with: "gzip")
+let _encrypt: SimpleEncrypter = EncrypterXor(with: "password12345")
+let _pkgfile: String = "filename"
+let pkg = ResourcePackage(with: _pkgfile, encrypter: _encrypt, compressor: _compress)
+~~~
+
+### Open packages with package reader
+
+~~~swift
+let pkgReader = ResourcePackageReader(
+        withCache: false,
+        useTwoStepLocating: false,
+        autoDeviceCustomization: false,
+        useKeyPrefix: false)
+pkgReader.packages["pkg1"] = pkg
+
+let themePkgReader = ResourcePackageReader(withTheme theme: String,
+                            FromThemePackages respkg: ["themePkg1" : themePkg],
+                            withBackwardTheme backward: "default")
+~~~
+
+### Read data
+
+~~~swift
+let stringValue = String(data:pkgReader[keyofString], encoding: .utf8)
+let imageValue = UIImage(data:pkgReader[keyofImage])
+~~~
+
+### Use UIExtensions
+
+~~~swift
+uibutton.loadTheme(from: themePkgReader, key: "button1")
+uilable.setText(from: themePkgReader, key: "labeltext")
+uiimageview.setImage(from: themePkgReader, key: "image1")
+~~~
+
+### Sounds
+
+~~~swift
+pkgReader.playSound(key: "asound", withVibrate: false)
+pkgReader.playMusic("bgmusic.mp3", loops: 1, volume: 0.8)
+~~~ 
 
 ## Author
 
