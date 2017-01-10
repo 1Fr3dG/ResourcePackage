@@ -115,8 +115,13 @@ public class ResourcePackage: NSObject {
         
         // 构造空文件 - build structure
         resourcefile = Data(bytes: [82, 83, 80, 75])    // RSPK
-        resourcefile.append(Data(bytes: [0, 1, 0, 0]))  // Version
+        resourcefile.append(Data(bytes: [0, 2, 0, 0]))  // Version
         resourcefile.append(Data(count: 8)) // space for resourcelist pointer
+        
+        let _info: [String: Any] = [ "Compressor" : compressDeligate.description,
+                                     "Encrypter" : cypherDeligate.description]
+        let infoData = NSKeyedArchiver.archivedData(withRootObject: _info)
+        resourcefile.append(infoData)
         
         let _pkgShortName = URL(fileURLWithPath: resourcePackageFileName).lastPathComponent
         let pkgName = NSKeyedArchiver.archivedData(withRootObject: _pkgShortName.data(using: .utf8)!)
