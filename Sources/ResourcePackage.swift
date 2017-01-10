@@ -200,13 +200,17 @@ public class ResourcePackage: NSObject {
     ///
     /// Append resource
     public func append(with key: String, value: Data) -> Bool {
+        var _key = key
+        while _key.lengthOfBytes(using: .utf8) > 0 && _key.substring(to: _key.index(after: _key.startIndex)) == "/" {
+            _key.remove(at: _key.startIndex)
+        }
         guard isWritable else {
             ResourcePackage._logger("ERROR: Package in readonly mode")
             return false
         }
         
-        if resourcelist[key] != nil {
-            ResourcePackage._logger("ERROR: Duplicated key [\(key)]")
+        if resourcelist[_key] != nil {
+            ResourcePackage._logger("ERROR: Duplicated key [\(_key)]")
             return false
         }
         
@@ -214,7 +218,7 @@ public class ResourcePackage: NSObject {
         resourcefile.append(encode(NSKeyedArchiver.archivedData(withRootObject: value)))
         let _newfiletail = resourcefile.count
         
-        resourcelist[key] = [_oldfiletail,_newfiletail]
+        resourcelist[_key] = [_oldfiletail,_newfiletail]
         return true
     }
 }
