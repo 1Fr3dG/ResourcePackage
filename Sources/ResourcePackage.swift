@@ -29,10 +29,10 @@ public class ResourcePackage: NSObject {
     private let compressDeligate: SimpleEncrypter
     
     private func encode(_ _data: Data) -> Data {
-        return compressDeligate.encrypt(cypherDeligate.encrypt(_data))
+        return cypherDeligate.encrypt(compressDeligate.encrypt(_data))
     }
     private func decode(_ _data: Data) -> Data {
-        return cypherDeligate.decrypt(compressDeligate.decrypt(_data))
+        return compressDeligate.decrypt(cypherDeligate.decrypt(_data))
     }
     
     /// 打开文件准备读取
@@ -83,7 +83,7 @@ public class ResourcePackage: NSObject {
         
         ResourcePackage._logger("-> Resource list loaded: \(file) [\(resourcelistAddress) - \(resourcelistEnd)]")
         let resourcelistRange: Range<Data.Index> = Int(resourcelistAddress) ..< Int(resourcelistEnd)
-        let listdata = cypherDeligate.decrypt(compressDeligate.decrypt(resourcefile.subdata(in: resourcelistRange)))
+        let listdata = compressDeligate.decrypt(cypherDeligate.decrypt(resourcefile.subdata(in: resourcelistRange)))
         resourcelist = NSKeyedUnarchiver.unarchiveObject(with: listdata) as! [String : [Int]]
         
         guard resourcelist.count > 0 else {
@@ -120,9 +120,9 @@ public class ResourcePackage: NSObject {
         
         let _pkgShortName = URL(fileURLWithPath: resourcePackageFileName).lastPathComponent
         let pkgName = NSKeyedArchiver.archivedData(withRootObject: _pkgShortName)
-        let encodedName = compressDeligate.encrypt(cypherDeligate.encrypt(pkgName))
+        let encodedName = cypherDeligate.encrypt(compressDeligate.encrypt(pkgName))
         resourcefile.append(pkgName)
-        resourcelist = ["Package Name": [16,16+encodedName.count]]
+        resourcelist = ["_packageName": [16,16+encodedName.count]]
         
         // 尝试写入文件 - try create real file
         do {
