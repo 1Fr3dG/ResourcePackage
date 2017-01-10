@@ -71,6 +71,10 @@ guard cli.unparsedArguments.count >= 2 else {
     exit(EX_USAGE)
 }
 
+if verbosity.value > 0 {
+    ResourcePackage._logger = {str in print("PKG=> ".blue.onYellow + str)}
+}
+
 // compress & encrypt parameter
 var _compress: SimpleEncrypter = EncrypterNone(with: "")
 var _encrypt: SimpleEncrypter = EncrypterNone(with: "")
@@ -124,10 +128,10 @@ if encrypt.value != nil {
         _encrypt = EncrypterNone(with: "")
     case "xor":
         print("  Use ".green + "EncrypterXor".blue + " with key " + _password.green)
-        _encrypt = EncrypterNone(with: _password)
+        _encrypt = EncrypterXor(with: _password)
     case "aes":
         print("  Use ".green + "EncrypterAES".blue + " with key " + _password.green)
-        _encrypt = EncrypterNone(with: _password)
+        _encrypt = EncrypterAES(with: _password)
     default:
         print("  " + encrypt.value!.blue.bold.onYellow + " is not available, use ".red + "EncrypterNone".green.blink)
         _encrypt = EncrypterNone(with: "")
@@ -153,7 +157,7 @@ case "c", "create" :
     }
     // check package
     if fileManager.fileExists(atPath: cli.unparsedArguments[1]) {
-        print("ERROR: ".red.bold + "Package file ".red + "\(cli.unparsedArguments[2])".red.bold.onYellow + " already exists".red)
+        print("ERROR: ".red.bold + "Package file ".red + "\(cli.unparsedArguments[1])".red.bold.onYellow + " already exists".red)
         exit(EX_CANTCREAT)
     }
     
@@ -161,7 +165,7 @@ case "c", "create" :
     // creating package file
     let path = cli.unparsedArguments[2]
     print("  Begin creating package".green)
-    if let pkg = ResourcePackage(to: cli.unparsedArguments[1]) {
+    if let pkg = ResourcePackage(to: cli.unparsedArguments[1], encrypter: _encrypt, compressor: _compress) {
         for file in fileManager.enumerator(atPath: path)! {
             let fullpath = path + "/" + (file as! String)
             if verbosity.value > 0 {
@@ -187,7 +191,7 @@ case "l", "list" :
     
     // reading package
     print("  Loading package file".green)
-    if let pkg = ResourcePackage(with: cli.unparsedArguments[1]) {
+    if let pkg = ResourcePackage(with: cli.unparsedArguments[1], encrypter: _encrypt, compressor: _compress) {
         print("  Package ".green + "\(cli.unparsedArguments[1])".blue.onYellow + " contents ".green + "\(pkg.ResourceList.count)".red.onYellow + " resources".green)
         for _res in pkg.ResourceList {
             print("    " + "\(_res)".green)
@@ -210,25 +214,48 @@ case "x", "extract" :
     }
     // reading package
     print("  Loading package file".green)
-    if let pkg = ResourcePackage(with: cli.unparsedArguments[1]) {
+    if let pkg = ResourcePackage(with: cli.unparsedArguments[1], encrypter: _encrypt, compressor: _compress) {
         // resource
         if let _res = pkg[cli.unparsedArguments[2]] {
             print("  Resource ".green + "\(cli.unparsedArguments[2])".blue.onYellow + " has ".green + "\(_res.count)".red.onYellow + " bytes".green)
             print("⬇︎⬇︎⬇︎⬇︎⬇︎ ⬇︎⬇︎⬇︎⬇︎⬇︎".green.blink)
             if let _text = String(data:_res, encoding: String.Encoding.utf8) {
-                print(_text)
-                //print(String(data:_res as! Data, encoding: String.Encoding.utf8))
+                switch verbosity.value {
+                case 0:
+                    print(_text.substring(to: _text.index(_text.startIndex, offsetBy: 32, limitedBy: _text.endIndex) ?? _text.endIndex))
+                default:
+                    print(_text)
+                }
             } else {
                 switch verbosity.value {
                 case 0:
-                    print(_res.subdata(in:0..<16).toHexString())
+                    let _outputLength = _res.count > 16 ? 16 : _res.count
+                    print(_res.subdata(in:0..<_outputLength).toHexString())
                 case 1:
-                    for i in 0..<16 {
-                        print("\(i)".bold, terminator: "\t")
-                        for j in 0..<4 {
-                            print(_res.subdata(in:i*16+j*4..<i*16+j*4+4).toHexString().blue, terminator: " ")
+                    let _output = _res.subdata(in: 0..<(_res.count > 256 ? 256 : _res.count))
+                    var _tmpascii = ""
+                    print("--\t00010203 04050607 08090A0B 0C0D0E0F".bold)
+                    for i in 0..<_output.count {
+                        if i % 16 == 0 {
+                            print(String(format:"%02X", i / 16).bold, terminator: "\t")
                         }
-                        print()
+                        
+                        print(String(format:"%02X", _output[i]).blue, terminator: "")
+                        
+                        if (i + 1) % 4 == 0 {
+                            print(" ", terminator: "")
+                        }
+                        
+                        if _output[i] >= 32 && _output[i] <= 127 {
+                            _tmpascii.append(Character(UnicodeScalar(_output[i])))
+                        } else {
+                            _tmpascii.append(" ")
+                        }
+                        
+                        if (i + 1) % 16 == 0 {
+                            print("\t" + _tmpascii.green.onBlue)
+                            _tmpascii = ""
+                        }
                     }
                 default:
                     print(_res.toHexString())
