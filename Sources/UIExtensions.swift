@@ -20,7 +20,7 @@
         /// - parameter reader: ResourcePackageReader which includes the theme
         /// - parameter key: key for the UIView
         /// - parameter formater: TextFormater for texts, `nil` will use theme default setting
-        func loadTheme(from reader: ResourcePackageReader, key: String, with formater: TextFormater? = nil) {
+        public func loadTheme(from reader: ResourcePackageReader, key: String, with formater: TextFormater? = nil) {
             
             for (_sname, _state) in [
                 (key, UIControlState.normal),
@@ -48,7 +48,7 @@
         /// - parameter reader: ResourcePackageReader which includes the theme
         /// - parameter key: key for the UIView
         /// - parameter formater: TextFormater for texts, `nil` will use theme default setting
-        func setText(from reader: ResourcePackageReader, key: String, with formater: TextFormater? = nil) {
+        public func setText(from reader: ResourcePackageReader, key: String, with formater: TextFormater? = nil) {
             
             attributedText = reader.getFormatedString(key, formater: formater)
             
@@ -64,7 +64,7 @@
         ///
         /// - parameter reader: ResourcePackageReader which includes the theme
         /// - parameter key: key for the UIView
-        func setImage(from reader: ResourcePackageReader, key: String) {
+        public func setImage(from reader: ResourcePackageReader, key: String) {
             
             image = reader.getImage(key)
             highlightedImage = reader.getImage(key + ".highlighted")
