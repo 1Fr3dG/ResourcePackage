@@ -143,10 +143,10 @@ public class ResourcePackageReader: NSObject {
             if !_useprefix {
                 return getData(key: key)
             } else {
-                if let _value = getData(key: _keyprefix + key) {
+                if let _value = getData(key: _keyprefix + "/" + key) {
                     return _value
                 } else {
-                    return getData(key: _keyprefixbackward + key)
+                    return getData(key: _keyprefixbackward + "/" + key)
                 }
             }
         }
