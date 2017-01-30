@@ -38,7 +38,7 @@ extension ResourcePackageReader {
             if newValue == nil {
                 _keyprefix = ""
             } else {
-                if let _ = getData(key: newValue!, isCacheable: false) {
+                if themesList[newValue] != nil {
                     _keyprefix = newValue!
                     cleanCache()
                 } else {

@@ -83,6 +83,20 @@ uilable.setText(from: themePkgReader, key: "labeltext")
 uiimageview.setImage(from: themePkgReader, key: "image1")
 ~~~
 
+* uibutton.loadTheme
+	* key.title -> uibutton.attributedTitle
+	* key.image -> uibutton.image
+	* key.bgimage -> uibutton.backgroundImage
+	* key.disabled.above
+	* key.highlighted.above
+	* key.selected.above
+	* key.focused.above
+* uilabel.setText
+	* key -> uilabel.attributedText
+* uiimageview.setImage
+	* key -> uiimageview.image
+	* key.highlighted -> uiimageview.highlightedImage
+
 ### Sounds
 
 ~~~swift

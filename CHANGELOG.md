@@ -9,6 +9,9 @@ Package resources to a single file, and access them via file name as key.
 [![License](https://img.shields.io/cocoapods/l/ResourcePackage.svg?style=flat)](http://cocoapods.org/pods/ResourcePackage)
 [![Platform](https://img.shields.io/cocoapods/p/ResourcePackage.svg?style=flat)](http://cocoapods.org/pods/ResourcePackage)
 
+* change theme validation method
+
+# 1.0.1
 * Enable UIExtension
 
 # 1.0.0
