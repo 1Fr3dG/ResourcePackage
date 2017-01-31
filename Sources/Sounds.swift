@@ -28,10 +28,10 @@ extension ResourcePackageReader {
             if !_useprefix {
                 _sdata = getData(key: key)
             } else {
-                if let _value = getData(key: _keyprefix + key) {
+                if let _value = getData(key: _keyprefix + "/" + key) {
                     _sdata = _value
                 } else {
-                    _sdata = getData(key: _keyprefixbackward + key)
+                    _sdata = getData(key: _keyprefixbackward + "/" + key)
                 }
             }
             
@@ -81,10 +81,10 @@ extension ResourcePackageReader {
         if !_useprefix {
             _sdata = getData(key: key)
         } else {
-            if let _value = getData(key: _keyprefix + key) {
+            if let _value = getData(key: _keyprefix + "/" + key) {
                 _sdata = _value
             } else {
-                _sdata = getData(key: _keyprefixbackward + key)
+                _sdata = getData(key: _keyprefixbackward + "/" + key)
             }
         }
         
