@@ -75,6 +75,23 @@ let stringValue = String(data:pkgReader[keyofString], encoding: .utf8)
 let imageValue = UIImage(data:pkgReader[keyofImage])
 ~~~
 
+#### Resource Priority
+
+* resource package priority is reverse order of package key
+
+* `pkgReader[key]` will looking for resource with following order:
+
+	* [key+model+lang]
+	* [key+model]
+	* [key+devicetype+lang]
+	* [key+devicetype]
+	* [key+lang]
+	* [key]
+	
+	** NOTE: it will ONLY search the package with [key] resource **
+
+* for two step locating, sufix will NOT applied for 2nd search, but all packages will be included
+
 ### Use UIExtensions
 
 ~~~swift

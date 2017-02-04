@@ -63,6 +63,26 @@ public class ResourcePackageReader: NSObject {
         var _deviceModel = ""
     #endif
     
+    /// 语言: 优先使用带有语言后缀的资源
+    ///
+    /// Language: Resource with lauchage sufix has higher priority
+    public var language = ""
+    
+    public override var description : String {
+        var descString = "ResourcePackageReader: [\(resourcePackageFileName)]\n"
+        descString += "  Cache: \(_usecache)\n"
+        descString += "  Two Step Locating: \(_twosteplocating)\n"
+        descString += "  Device Custimizable: \(_devicecustimizable)\n"
+        descString += "    Device Type: \(_deviceType)\n"
+        descString += "    Device Model: \(_deviceModel)\n"
+        descString += "  Language: \(language)\n"
+        descString += "  Use Prefix: \(_useprefix)\n"
+        descString += "    Prefix: \(_keyprefix)\n"
+        descString += "    Backward Prefix: \(_keyprefixbackward)\n"
+        
+        return descString
+    }
+    
     /// read data from package
     internal func getData(key: String?, isCacheable: Bool = true) -> Data? {
         guard key != nil else {
@@ -77,21 +97,33 @@ public class ResourcePackageReader: NSObject {
         // search
         for (_, pkg) in packages.sorted(by: {$0.0 > $1.0}) {
             if let _pkgData = pkg[key!] {
-                if _twosteplocating {
-                    var _pointerData = _pkgData
-                    _logger("  Found pointer of [\(key)] from [\(pkg.resourcePackageFileName)]")
-                    
-                    if _devicecustimizable {
-                        if let _typeData = pkg[key! + _deviceType] {
-                            _pointerData = _typeData
-                        }
-                        
-                        if let _modelData = pkg[key! + _deviceModel] {
-                            _pointerData = _modelData
-                        }
+                var _returnData = _pkgData
+                _logger("  Found base resource [\(key)] from [\(pkg.resourcePackageFileName)]")
+                if _devicecustimizable {
+                    if let _typeData = pkg[key! + _deviceType] {
+                        _returnData = _typeData
                     }
                     
-                    let _pointText = String(data: _pointerData, encoding: String.Encoding.utf8)!
+                    if let _typeData = pkg[key! + _deviceType + language] {
+                        _returnData = _typeData
+                    }
+                    
+                    if let _modelData = pkg[key! + _deviceModel] {
+                        _returnData = _modelData
+                    }
+                    
+                    if let _modelData = pkg[key! + _deviceModel + language] {
+                        _returnData = _modelData
+                    }
+                } else {
+                    if let _locData = pkg[key! + language] {
+                        _returnData = _locData
+                    }
+                }
+                
+                
+                if _twosteplocating {
+                    let _pointText = String(data: _returnData, encoding: String.Encoding.utf8)!
                     var _pointer = String(_pointText.characters.filter { !"\n\r".characters.contains($0) })
                     if _pointer.hasPrefix("/") {
                         _pointer.remove(at: _pointer.startIndex)
@@ -113,13 +145,14 @@ public class ResourcePackageReader: NSObject {
                             }
                         }
                         _logger("  Cannot locate resource pointed by [\(_pointer)]")
+                        return nil
                     }
                 } else {
                     // false == _twosteploacting
                     if _usecache && isCacheable {
-                        _data[key!] = _pkgData
+                        _data[key!] = _returnData
                     }
-                    return _pkgData
+                    return _returnData
                 }
             }
             _logger("Cannot locate key [\(key)]")
