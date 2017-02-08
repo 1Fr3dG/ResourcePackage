@@ -22,6 +22,12 @@
         /// - parameter formater: TextFormater for texts, `nil` will use theme default setting
         public func loadTheme(from reader: ResourcePackageReader, key: String, with formater: TextFormater? = nil) {
             
+            let textFormater = formater ?? reader.themeTextFormater
+            
+            self.layoutIfNeeded()
+            let _width = self.bounds.size.width
+            let _height = self.bounds.size.height
+            
             for (_sname, _state) in [
                 (key, UIControlState.normal),
                 (key + ".disabled", UIControlState.disabled),
@@ -29,7 +35,7 @@
                 (key + ".selected", UIControlState.selected),
                 (key + ".focused", UIControlState.focused),
                 ] {
-                    setAttributedTitle(reader.getFormatedString(_sname + ".title", formater: formater), for: _state)
+                    setAttributedTitle(textFormater.format(reader.getString(_sname + ".title"), imgWidth: _width, imgHeight: _height), for: _state)
                     setImage(reader.getImage(_sname + ".image"), for: _state)
                     setBackgroundImage(reader.getImage(_sname + ".bgimg"), for: _state)
             }
@@ -50,7 +56,13 @@
         /// - parameter formater: TextFormater for texts, `nil` will use theme default setting
         public func setText(from reader: ResourcePackageReader, key: String, with formater: TextFormater? = nil) {
             
-            attributedText = reader.getFormatedString(key, formater: formater)
+            let textFormater = formater ?? reader.themeTextFormater
+            
+            self.layoutIfNeeded()
+            let _width = self.bounds.size.width
+            let _height = self.bounds.size.height
+            
+            attributedText = textFormater.format(reader.getString(key), imgWidth: _width, imgHeight: _height)
             
         }
     }

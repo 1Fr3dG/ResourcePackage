@@ -222,9 +222,6 @@ public class ResourcePackageReader: NSObject {
         }
     }
     
-    /// used by Themes extension
-    var _textFormater = TextFormater()
-    
     /// used by sounds extension
     var musicPlayer : AVAudioPlayer?
     var sounds: [String : SystemSoundID] = [:]

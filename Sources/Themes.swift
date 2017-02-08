@@ -46,7 +46,6 @@ extension ResourcePackageReader {
                     _logger("Theme \(newValue) not exists, use \(_keyprefix)")
                 }
             }
-            _textFormater = themeTextFormater
         }
     }
     
@@ -191,7 +190,6 @@ extension ResourcePackageReader {
                   withPrefix: theme,
                   withPrefixBackward: backward)
         packages = respkg
-        _textFormater = themeTextFormater
     }
     
     /// 获取主题文本
@@ -211,7 +209,7 @@ extension ResourcePackageReader {
     /// get formatted text from theme
     /// - returns NSAttributedString or nil if key not found or resource cannot be converted to string
     public func getFormatedString(_ key: String, formater: TextFormater? = nil) -> NSAttributedString? {
-        let _f = formater ?? self._textFormater
+        let _f = formater ?? self.themeTextFormater
         return _f.format(getString(key))
     }
     /// 获取主题图片
