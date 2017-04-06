@@ -43,7 +43,7 @@ extension ResourcePackageReader {
                     cleanCache()
                 } else {
                     _keyprefix = _keyprefixbackward
-                    _logger("Theme \(newValue) not exists, use \(_keyprefix)")
+                    _logger("Theme \(String(describing: newValue)) not exists, use \(_keyprefix)")
                 }
             }
         }

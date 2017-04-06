@@ -88,17 +88,17 @@ public class ResourcePackageReader: NSObject {
         guard key != nil else {
             return nil
         }
-        _logger("Locating: \(key)")
+        _logger("Locating: \(String(describing: key))")
         // cache
         if let _cachedvalue = _data[key!] {
-            _logger("  cache hit: \(key)")
+            _logger("  cache hit: \(String(describing: key))")
             return _cachedvalue
         }
         // search
         for (_, pkg) in packages.sorted(by: {$0.0 > $1.0}) {
             if let _pkgData = pkg[key!] {
                 var _returnData = _pkgData
-                _logger("  Found base resource [\(key)] from [\(pkg.resourcePackageFileName)]")
+                _logger("  Found base resource [\(String(describing: key))] from [\(pkg.resourcePackageFileName)]")
                 if _devicecustimizable {
                     if let _typeData = pkg[key! + _deviceType] {
                         _returnData = _typeData
@@ -137,7 +137,7 @@ public class ResourcePackageReader: NSObject {
                         _logger("    Resource: [\(_pointer)]")
                         for (_, vpkg) in packages.sorted(by: {$0.0 > $1.0}) {
                             if let value = vpkg[_pointer] {
-                                _logger("  Found @[\(vpkg.resourcePackageFileName)] for [\(key)]")
+                                _logger("  Found @[\(vpkg.resourcePackageFileName)] for [\(String(describing: key))]")
                                 if _usecache && isCacheable {
                                     _data[key!] = value
                                 }
@@ -155,7 +155,7 @@ public class ResourcePackageReader: NSObject {
                     return _returnData
                 }
             }
-            _logger("Cannot locate key [\(key)]")
+            _logger("Cannot locate key [\(String(describing: key))]")
         }
         return nil
     }
