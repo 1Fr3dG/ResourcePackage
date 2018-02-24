@@ -180,7 +180,7 @@ public class ResourcePackage: NSObject {
     public subscript(key: String) -> Data? {
         get {
             var _key = key
-            while _key.lengthOfBytes(using: .utf8) > 0 && _key.substring(to: _key.index(after: _key.startIndex)) == "/" {
+            while _key.lengthOfBytes(using: .utf8) > 0 && _key[..<_key.index(after: _key.startIndex)] == "/" {
                 _key.remove(at: _key.startIndex)
             }
             ResourcePackage._logger("Locating resource: [\(resourcePackageFileName)].[\(_key)]")
@@ -206,7 +206,7 @@ public class ResourcePackage: NSObject {
     /// Append resource
     public func append(with key: String, value: Data) -> Bool {
         var _key = key
-        while _key.lengthOfBytes(using: .utf8) > 0 && _key.substring(to: _key.index(after: _key.startIndex)) == "/" {
+        while _key.lengthOfBytes(using: .utf8) > 0 && _key[..<_key.index(after: _key.startIndex)] == "/" {
             _key.remove(at: _key.startIndex)
         }
         guard isWritable else {

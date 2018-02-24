@@ -27,7 +27,7 @@ extension ResourcePackageReader {
             guard _themekey.characters.count > 0 else {
                 return ""
             }
-            if _themekey.substring(from: _themekey.endIndex) == "/" {
+            if _themekey[_themekey.endIndex...] == "/" {
                 _themekey.remove(at: _themekey.endIndex)
             }
             

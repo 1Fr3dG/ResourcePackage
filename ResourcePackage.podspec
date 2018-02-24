@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name             = 'ResourcePackage'
-  s.version          = '1.2.1'
+  s.version          = '1.4.0'
   s.summary          = 'Manage resources for application.'
 
   s.description      = <<-DESC
@@ -21,6 +21,6 @@ So resources can be easily managemented as well as encrypted.
   s.source_files = 'Sources/*'
   
   s.dependency 'SimpleEncrypter'
-  s.dependency 'TextFormater', '~> 1.2.0' 
+  s.dependency 'TextFormater'
   s.ios.dependency 'DeviceKit'
 end
