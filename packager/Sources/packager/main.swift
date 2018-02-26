@@ -5,7 +5,7 @@ import SimpleEncrypter
 import CommandLineKit
 import Rainbow
 
-let versionString = "Ver 1.0.0\n"
+let versionString = "Ver 1.4.0\n"
 let _usageTitle = "Usage: packager operation <packageName> [path|resource] [options]\n\n".bold
 let _usageOperations = "  " + "operation: create|list|extract \n".green.bold.underline +
     "    " + "packager create <packageName> <path> [options] \n".blue +
@@ -20,7 +20,7 @@ print(versionString)
 let cli = CommandLineKit.CommandLine()
 
 let compress = StringOption(longFlag: "compress", required: false,
-                            helpMessage: "Algorithm for compress - none/gzip")
+                            helpMessage: "Algorithm for compress - none/lzfse/lz4/lzma")
 let encrypt = StringOption(longFlag: "encrypt", required: false,
                             helpMessage: "Algorithm for encryption - none/xor/aes")
 let password = StringOption(longFlag: "password", required: false,
@@ -79,31 +79,18 @@ if compress.value != nil {
     case "none":
         print("  Use ".green + "EncrypterNone".blue)
         _compress = EncrypterNone(with: "")
-    case "gzip":
-        print("  Use ".green + "EncrypterCompress(with: gzip)".blue)
-        _compress = EncrypterCompress(with: "gzip")
     case "lz4":
         print("  Use ".green + "EncrypterCompress(with: lz4)".blue)
         _compress = EncrypterCompress(with: "lz4")
     case "lzma":
         print("  Use ".green + "EncrypterCompress(with: lzma)".blue)
         _compress = EncrypterCompress(with: "lzma")
-    case "zlib":
-        print("  Use ".green + "EncrypterCompress(with: zlib)".blue)
-        _compress = EncrypterCompress(with: "zlib")
     case "lzfse":
         print("  Use ".green + "EncrypterCompress(with: lzfse)".blue)
         _compress = EncrypterCompress(with: "lzfse")
     default:
         print("  " + compress.value!.blue.bold.onYellow + " is not available, use ".red + "EncrypterNone".green.blink)
         _compress = EncrypterNone(with: "")
-    }
-
-    // support only none/gzip due to swift build force osx.target 11.10
-    if compress.value!.lowercased() != "none" && compress.value!.lowercased() != "gzip" {
-        print("This version support only none & gzip".blink)
-        print("Force using gzip".blink)
-        _compress = EncrypterCompress(with: "gzip")
     }
 
 }
