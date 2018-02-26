@@ -9,6 +9,10 @@ Package resources to a single file, and access them via file name as key.
 [![License](https://img.shields.io/cocoapods/l/ResourcePackage.svg?style=flat)](http://cocoapods.org/pods/ResourcePackage)
 [![Platform](https://img.shields.io/cocoapods/p/ResourcePackage.svg?style=flat)](http://cocoapods.org/pods/ResourcePackage)
 
+* support Swift 4
+* update packager tool
+
+# 1.2.0
 * modified to work with updated textFormater
 	* textFormater 1.2.0 : add persentage size support for image
 
