@@ -1,11 +1,24 @@
+// swift-tools-version:4.0
+
 import PackageDescription
 
 let package = Package(
     name: "ResourcePackage",
-    dependencies: [
-        //.Package(url: "https://github.com/dennisweissmann/DeviceKit", majorVersion: 1),
-        .Package(url: "https://github.com/1Fr3dG/TextFormater", majorVersion: 1),
-        .Package(url: "https://github.com/1Fr3dG/SimpleEncrypter", majorVersion: 0)
+    products: [
+        .library(
+            name: "ResourcePackage",
+            targets: ["ResourcePackage"]),
     ],
-    exclude: ["Example", "packager"]
+    dependencies: [
+        .package(url: "https://github.com/1Fr3dG/TextFormater", from: "1.0.0"),
+        .package(url: "https://github.com/1Fr3dG/SimpleEncrypter", from: "1.0.0")
+    ],
+    targets: [
+        .target(
+            name: "ResourcePackage",
+            dependencies: ["SimpleEncrypter", "TextFormater"],
+            path: "Sources",
+            sources: ["ResourcePackage.swift"]
+            )
+    ]
 )

@@ -24,7 +24,7 @@ extension ResourcePackageReader {
             }
             
             var _themekey = _keyprefix
-            guard _themekey.characters.count > 0 else {
+            guard _themekey.count > 0 else {
                 return ""
             }
             if _themekey[_themekey.endIndex...] == "/" {
@@ -61,7 +61,7 @@ extension ResourcePackageReader {
         if let _nameData = getData(key: _key + "/name.text"),
             let _nameString = String(data: _nameData, encoding: .utf8) {
             var _name = _nameString
-            if _name.characters.first == "/" {
+            if _name.first == "/" {
                 _name.remove(at: _name.startIndex)
             }
             return _name
@@ -117,11 +117,11 @@ extension ResourcePackageReader {
                 let _colorlist = String(data: _sd, encoding: .utf8) {
                 for _color in _colorlist.components(separatedBy: .newlines) {
                     // blank
-                    guard _color.characters.count > 0 else {
+                    guard _color.count > 0 else {
                         continue
                     }
                     // comments
-                    guard _color.characters.first != "#" else {
+                    guard _color.first != "#" else {
                         continue
                     }
                     let _column = _color.components(separatedBy: .whitespaces)
@@ -148,11 +148,11 @@ extension ResourcePackageReader {
                 let _fontlist = String(data: _sd, encoding: .utf8) {
                 for _font in _fontlist.components(separatedBy: .newlines) {
                     // blank
-                    guard _font.characters.count > 0 else {
+                    guard _font.count > 0 else {
                         continue
                     }
                     // comments
-                    guard _font.characters.first != "#" else {
+                    guard _font.first != "#" else {
                         continue
                     }
                     let _column = _font.components(separatedBy: .whitespaces)

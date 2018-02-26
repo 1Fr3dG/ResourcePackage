@@ -124,7 +124,7 @@ public class ResourcePackageReader: NSObject {
                 
                 if _twosteplocating {
                     let _pointText = String(data: _returnData, encoding: String.Encoding.utf8)!
-                    var _pointer = String(_pointText.characters.filter { !"\n\r".characters.contains($0) })
+                    var _pointer = String(_pointText.filter { !"\n\r".contains($0) })
                     if _pointer.hasPrefix("/") {
                         _pointer.remove(at: _pointer.startIndex)
                         _logger("    Inline Text: [\(_pointer)]")
